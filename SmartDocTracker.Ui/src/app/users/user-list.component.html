@@ -1,0 +1,318 @@
+<!-- users/user-list.component.html -->
+<div class="user-list-container">
+  <!-- Header -->
+  <div class="user-list-header">
+    <h2>User Management</h2>
+    
+    <div class="header-actions" *ngIf="canManageUsers">
+     <div class="selection-info" *ngIf="getSelectedCount() > 0">
+        <span class="selected-count">{{ getSelectedCount() }} user(s) selected</span>
+        <button class="btn btn-secondary clear-selection" (click)="clearSelections()">
+          <span class="material-icons-outlined">clear</span>
+          Clear
+        </button>
+    </div>
+      <button 
+        class="btn btn-primary edit-btn" 
+        [disabled]="getSelectedCount() !== 1"
+        (click)="editSelectedUser()"
+        [title]="getSelectedCount() !== 1 ? 'Please select exactly one user to edit' : 'Edit selected user'"
+      >
+        <span class="material-icons-outlined">edit</span>
+        Edit User
+      </button>
+        <button 
+        class="btn btn-primary edit-btn" 
+        (click)="AddSelectedUser()"
+        [title]="'Add new user'">
+        <span class="material-icons-outlined">add</span>
+        Add User
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading">
+    Loading users...
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && users.length === 0" class="empty-state">
+    <div class="empty-state-icon">👥</div>
+    <h3>No Users Found</h3>
+    <p>No users are currently available in the system.</p>
+  </div>
+
+  <!-- Users Grid -->
+  <div *ngIf="!isLoading && users.length > 0" class="users-grid">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th *ngIf="canManageUsers" class="checkbox-column">
+            <span class="sr-only">Select</span>
+          </th>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>User ID</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users; trackBy: trackByUserId" 
+            [class.selected]="isUserSelected(user.id)">
+          <td *ngIf="canManageUsers" class="checkbox-cell">
+            <label class="checkbox-wrapper">
+              <input 
+                type="checkbox" 
+                [checked]="isUserSelected(user.id)"
+                (change)="onUserSelect(user.id, $event)"
+              >
+              <span class="checkmark"></span>
+            </label>
+          </td>
+          <td>
+            <div class="user-info">
+              <strong>{{ user.fullName }}</strong>
+            </div>
+          </td>
+          <td>
+            <span class="email">{{ user.email }}</span>
+          </td>
+          <td>
+            <span class="user-id">{{ user.id }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- Edit User Modal -->
+<div *ngIf="showEditModal" class="modal-overlay" (click)="closeEditModal()">
+  <div class="modal-container edit-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <span class="material-icons-outlined">edit</span>
+        Edit User
+      </h3>
+      <button class="close-btn" (click)="closeEditModal()" aria-label="Close modal">
+        <span class="material-icons-outlined">close</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="editForm" (ngSubmit)="updateUser()">
+        <!-- Full Name Field -->
+        <div class="form-group">
+          <label for="fullName">
+            <span class="material-icons-outlined">person</span>
+            Full Name *
+          </label>
+          <input 
+            type="text" 
+            id="fullName" 
+            formControlName="fullName"
+            [class.is-invalid]="isFieldInvalid('fullName')"
+            placeholder="Enter full name"
+          >
+          <div *ngIf="isFieldInvalid('fullName')" class="invalid-feedback">
+            {{ getFieldError('fullName') }}
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email">
+            <span class="material-icons-outlined">email</span>
+            Email *
+          </label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            [class.is-invalid]="isFieldInvalid('email')"
+            placeholder="Enter email address"
+          >
+          <div *ngIf="isFieldInvalid('email')" class="invalid-feedback">
+            {{ getFieldError('email') }}
+          </div>
+        </div>
+
+        <!-- Role Field -->
+        <div class="form-group">
+          <label for="role">
+            <span class="material-icons-outlined">admin_panel_settings</span>
+            Role *
+          </label>
+          <div class="select-wrapper">
+            <select 
+              id="role" 
+              formControlName="role"
+              [class.is-invalid]="isFieldInvalid('role')"
+              [disabled]="isLoadingRoles || isUpdating"
+            >
+              <option value="" disabled>
+                {{ isLoadingRoles ? 'Loading roles...' : 'Select a role' }}
+              </option>
+              <option *ngFor="let role of roles" [value]="role.id">
+                {{ role.name }}
+              </option>
+            </select>
+            <span class="select-arrow material-icons-outlined">expand_more</span>
+          </div>
+          <div *ngIf="isFieldInvalid('role')" class="invalid-feedback">
+            {{ getFieldError('role') }}
+          </div>
+        </div>
+
+        <!-- Current User Info -->
+        <div class="current-info" *ngIf="userToEdit">
+          <h4>Current Information:</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">ID:</span>
+              <span class="value">{{ userToEdit.id }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Current Name:</span>
+              <span class="value">{{ userToEdit.fullName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Current Email:</span>
+              <span class="value">{{ userToEdit.email }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Success Message -->
+        <div *ngIf="updateSuccess" class="my-success-alert">
+          <span class="material-icons-outlined">check_circle</span>
+              {{ updateSuccess }}
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="updateError" class="my-error-alert">
+          <span class="material-icons-outlined">error</span>
+          {{ updateError }}
+        </div>
+      </form>
+    </div>
+    
+   <div class="modal-footer">
+  <button 
+    class="btn btn-secondary" 
+    (click)="closeEditModal()"
+    [disabled]="isUpdating"
+  >
+    Cancel
+  </button>
+  <button 
+    class="btn btn-primary" 
+    (click)="updateUser()"
+    [disabled]="editForm.invalid || isUpdating || isLoadingRoles"
+  >
+    <span class="material-icons-outlined">save</span>
+    {{ isUpdating ? 'Updating...' : 'Update User' }}
+  </button>
+</div>
+</div>
+</div>
+<!-- Add User Modal -->
+<div *ngIf="showAddModal" class="modal-overlay" (click)="closeAddModal()">
+  <div class="modal-container edit-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <span class="material-icons-outlined">add</span>
+        Add User
+      </h3>
+      <button class="close-btn" (click)="closeAddModal()" aria-label="Close modal">
+        <span class="material-icons-outlined">close</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="addForm" (ngSubmit)="addUser()">
+        <!-- Full Name Field -->
+        <div class="form-group">
+          <label for="fullName">
+            <span class="material-icons-outlined">person</span>
+            User Name *
+          </label>
+          <input 
+            type="text" 
+            id="fullName" 
+            formControlName="fullName"
+            [class.is-invalid]="isFieldInvalid('fullName')"
+            placeholder="Enter full name"
+          >
+          <div *ngIf="isFieldInvalid('fullName')" class="invalid-feedback">
+            {{ getFieldError('fullName') }}
+          </div>
+        </div>
+
+       <!-- Email Field -->
+        <div class="form-group">
+        <label for="email">
+            <span class="material-icons-outlined">email</span>
+            Email *
+        </label>
+        <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            [class.is-invalid]="isFieldInvalid('email')"
+            placeholder="Enter email address"
+        >
+        <div *ngIf="isFieldInvalid('email')" class="invalid-feedback">
+            {{ getFieldError('email') }}
+        </div>
+        </div>
+
+    <!-- Password Field -->
+    <div class="form-group">
+    <label for="password">
+        <span class="material-icons-outlined">lock</span>
+        Password *
+    </label>
+    <input 
+        type="password" 
+        id="password" 
+        formControlName="password"
+        [class.is-invalid]="isFieldInvalid('password')"
+        placeholder="Enter password"
+    >
+    <div *ngIf="isFieldInvalid('password')" class="invalid-feedback">
+        {{ getFieldError('password') }}
+    </div>
+    </div>
+
+        <!-- Success Message -->
+        <div *ngIf="updateSuccess" class="alert alert-success">
+          <span class="material-icons-outlined">check_circle</span>
+          {{ updateSuccess }}
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="updateError" class="alert alert-danger">
+          <span class="material-icons-outlined">error</span>
+          {{ updateError }}
+        </div>
+      </form>
+    </div>
+    
+   <div class="modal-footer">
+  <button 
+    class="btn btn-secondary" 
+    (click)="closeAddModal()"
+    [disabled]="isUpdating"
+  >
+    Cancel
+  </button>
+  <button 
+    class="btn btn-primary" 
+    (click)="addUser()"
+  >
+    <span class="material-icons-outlined">save</span>
+    {{ isUpdating ? 'Adding...' : 'Add User' }}
+  </button>
+</div>
+  </div>
+</div>

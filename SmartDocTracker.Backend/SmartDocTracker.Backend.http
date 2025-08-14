@@ -1,0 +1,10 @@
+@SmartDocTracker.Backend_HostAddress = http://localhost:5200
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYXNlV2ViQXBpU3ViamVjdCIsImp0aSI6IjMxOTJmYWQ5LWMwYmYtNGQ1My04YjU0LTE1ODhjY2Y1M2QxMiIsImlhdCI6MTc1NDUwNTE5MiwiSWQiOiJhYjRjMDEwYy1lYmJiLTQ4MWEtZDlmNi0wOGRkZDRhZDQ2YmIiLCJVc2VybmFtZSI6Ik5pcnNoZWUiLCJFbWFpbCI6Im5pcnNoZWVAZ21haWwuY29tIiwiZXhwIjoxNzU0NTEyMzkyLCJpc3MiOiJ5b3VyYXBwLmNvbSIsImF1ZCI6InlvdXJhcHAuY29tIn0.dPAr_iUk1reG6bgkOjKdWgp9bR3D2mtvPijqw6TOO-g
+
+
+GET {{SmartDocTracker.Backend_HostAddress}}/api/users/me
+Accept: application/json
+Authorization: {{token}}
+
+
+###

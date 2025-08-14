@@ -1,0 +1,71 @@
+<div class="user-list-container">
+  <!-- Header -->
+  <div class="user-list-header">
+    <h2>Audit Management</h2>
+    
+    <div class="header-actions" >
+        <button 
+        class="btn btn-primary edit-btn" 
+        (click)="exportToExcel()"
+        [title]="'Export to Excel'">
+        <span class="material-icons-outlined">file_download</span>
+Export to Excel      </button>
+
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading">
+    Loading users...
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && Audit.length === 0" class="empty-state">
+    <div class="empty-state-icon">👥</div>
+    <h3>No Users Found</h3>
+    <p>No users are currently available in the system.</p>
+  </div>
+
+  <!-- Users Grid -->
+  <div *ngIf="!isLoading && Audit.length > 0" class="users-grid">
+    <table class="users-table">
+      <thead>
+        <tr>
+         
+          <th>Name</th>
+          <th>Document Name</th>
+          <th>Action</th>
+          <th>Created on</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of Audit">
+          <!-- <td *ngIf="canManageUsers" class="checkbox-cell">
+            <label class="checkbox-wrapper">
+              <input 
+                type="checkbox" 
+                [checked]="isUserSelected(user.id)"
+                (change)="onUserSelect(user.id, $event)"
+              >
+              <span class="checkmark"></span>
+            </label>
+          </td> -->
+          <td>
+            <div class="user-info">
+              <strong>{{ user.fullName }}</strong>
+            </div>
+          </td>
+          <td>
+            <span class="email">{{ user.documentName }}</span>
+          </td>
+          <td>
+            <span class="user-id">{{ user.action }}</span>
+          </td>
+          <td>
+            <span class="user-id">{{ user.timestamp }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

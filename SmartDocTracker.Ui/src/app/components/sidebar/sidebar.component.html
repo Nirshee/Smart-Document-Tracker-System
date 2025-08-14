@@ -1,0 +1,41 @@
+<!-- components/sidebar/sidebar.component.html -->
+<nav class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="sidebar-header">
+    <h3>Smart Doc Tracker</h3>
+    <button class="toggle-btn" (click)="toggleSidebar()" type="button" aria-label="Toggle Sidebar">
+      <span class="material-icons-outlined">
+        {{isCollapsed ? 'chevron_right' : 'chevron_left'}}
+      </span>
+    </button>
+  </div>
+  
+  <ul class="nav flex-column">
+    <li class="nav-item" *ngFor="let item of menuItems">
+      <a 
+        class="nav-link" 
+        [routerLink]="item.path" 
+        routerLinkActive="active"
+        [attr.data-title]="item.title"
+      >
+        <span class="material-icons-outlined">{{item.icon}}</span>
+        <span class="menu-text">{{item.title}}</span>
+      </a>
+    </li>
+  </ul>
+  
+  <!-- User info section (optional) - shows current user role when collapsed -->
+  <div *ngIf="isCollapsed" class="user-info-collapsed" 
+       style="position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 0.7rem; text-align: center;">
+    <div title="Current Role: {{getCurrentUserRole()}}">
+      <span class="material-icons-outlined" style="font-size: 16px;">account_circle</span>
+    </div>
+  </div>
+  
+  <!-- Logout button at the bottom -->
+  <div class="nav mt-auto" style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+    <a class="nav-link" (click)="logout()" style="cursor: pointer;" [attr.data-title]="'Logout'">
+      <span class="material-icons-outlined">logout</span>
+      <span class="menu-text">Logout</span>
+    </a>
+  </div>
+</nav>
