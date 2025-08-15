@@ -33,6 +33,20 @@ export class AuthService {
         })
       );
   }
+  signUp(username: string, Email: string, password: string) {
+    return this.http.post<{ token: string }>(`${this.apiUrl}/register`, { username, Email, password })
+      .pipe(
+        tap(response => {
+          localStorage.setItem('authToken', response.token);
+          
+          // Optional: Log user info after successful login
+          const userInfo = this.jwtService.getCurrentUser();
+          if (userInfo) {
+            console.log('Logged in as:', userInfo);
+          }
+        })
+      );
+  }
 
   register(Email: string, password: string) {
     return this.http.post(`${this.apiUrl}/register`, { Email, password });

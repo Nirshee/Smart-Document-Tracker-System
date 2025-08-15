@@ -1,0 +1,85 @@
+<div class="signup-card">
+  <div class="signup-form-container">
+    <!-- Alert messages -->
+    <div *ngIf="successMessage" class="alert success-alert">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="alert error-alert">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="isLoading" class="loading-indicator">
+      Registering user...
+    </div>
+
+    <h2>Sign Up</h2>
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <input type="text" formControlName="username" placeholder="Username" required>
+    <div class="error" *ngIf="signupForm.get('username')?.touched && signupForm.get('username')?.invalid">
+      Username is required.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input type="email" formControlName="email" placeholder="Email" required>
+    <div class="error" *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid">
+      <div *ngIf="signupForm.get('email')?.errors?.['required']">Email is required.</div>
+      <div *ngIf="signupForm.get('email')?.errors?.['email']">Invalid email format.</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input type="password" formControlName="password" placeholder="Password" required>
+    <div class="error" *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
+      <div *ngIf="signupForm.get('password')?.errors?.['required']">Password is required.</div>
+      <div *ngIf="signupForm.get('password')?.errors?.['minlength']">
+        Password must be at least 6 characters.
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input type="password" formControlName="confirmedPassword" placeholder="Confirmed Password" required>
+    <div class="error" *ngIf="signupForm.get('confirmedPassword')?.touched && signupForm.hasError('passwordMismatch')">
+      Passwords do not match.
+    </div>
+  </div>
+
+  <div class="terms-checkbox">
+    <input type="checkbox" formControlName="termsAccepted" id="termsAccepted">
+    <label for="termsAccepted">I accept the terms & conditions</label>
+  </div>
+  <div class="error" *ngIf="signupForm.get('termsAccepted')?.touched && signupForm.get('termsAccepted')?.invalid">
+    You must accept the terms and conditions.
+  </div>
+
+  <button type="submit" class="signup-button" [disabled]="!signupForm.valid || isLoading">Sign Up</button>
+</form>
+
+
+    <!-- Social login icons -->
+    <div class="social-login">
+      <div class="social-icons">
+        <a href="#" class="social-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+        </a>
+        <a href="#" class="social-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook">
+        </a>
+        <a href="#" class="social-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub">
+        </a>
+        <a href="#" class="social-icon">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X">
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right side: login prompt -->
+  <div class="login-section">
+    <h2>Already have an account?</h2>
+    <p>Login to your account!</p>
+    <button class="login-button" (click)="goToLogin()">Login</button>
+  </div>
+</div>

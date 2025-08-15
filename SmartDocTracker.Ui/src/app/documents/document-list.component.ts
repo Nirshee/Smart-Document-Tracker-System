@@ -7,6 +7,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { PdfViewerModule } from "ng2-pdf-viewer";
 import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-document-list',
@@ -19,7 +20,8 @@ import { FormsModule } from '@angular/forms';
     FormsModule, // For ngModel
     DatePipe, // For date pipe
     RouterModule, // For routerLink if used
-    PdfViewerModule
+    PdfViewerModule,
+    NgxPaginationModule
   ]
 })
 export class DocumentListComponent implements OnInit {
@@ -27,8 +29,13 @@ export class DocumentListComponent implements OnInit {
   allDocuments: Document[] = []; // Store all documents for client-side filtering
   currentPage = 1;
   pageSize = 10;
-  totalItems = 0;
+  // totalItems = 0;
   isLoading = false;
+
+   // Pagination properties
+  p: number = 1;
+  itemsPerPage: number = 5;
+  totalItems: number = 0;
   
   // Modal properties
   showModal = false;
@@ -108,6 +115,7 @@ export class DocumentListComponent implements OnInit {
       .subscribe({
         next: (documents: Document[]) => {
           this.allDocuments = documents;
+          this.totalItems = documents.length; // <-- Set the total number of items
           this.generateStatusOptions();
           this.applyFilters();
           this.isLoading = false;

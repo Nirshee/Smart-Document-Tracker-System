@@ -4,20 +4,25 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { UserService, UserDetail, Role, UpdateUserRequest, AddUserDetail, AddUserRequest } from '../core/services/user.service';
 import { JwtService } from '../core/services/jwt.service';
+import { NgxPaginationModule } from 'ngx-pagination'; 
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule, NgxPaginationModule] 
 })
 export class UserListComponent implements OnInit {
   users: UserDetail[] = [];
   selectedUsers: Set<string> = new Set();
   isLoading = false;
   
-  
+  // Pagination properties
+  p: number = 1;
+  itemsPerPage: number = 5;
+  totalItems: number = 0;
+
   // Edit modal
   showEditModal = false;
   editForm: FormGroup;
@@ -27,7 +32,6 @@ export class UserListComponent implements OnInit {
   updateError = '';
   updateSuccess = '';
   userToEdit: UserDetail | null = null;
-
 
   // Add modal
   showAddModal = false;
@@ -71,6 +75,7 @@ export class UserListComponent implements OnInit {
     this.userService.getAllUsers().subscribe({
       next: (users) => {
         this.users = users;
+        this.totalItems = users.length; // <-- Set the total number of items
         this.isLoading = false;
       },
       error: (error) => {
@@ -131,7 +136,6 @@ export class UserListComponent implements OnInit {
       fullName: user.fullName,
       email: user.email,
       role: user.roleId
-    //   '' // We'll set this after loading roles
     });
     
     this.loadRoles();
@@ -146,7 +150,6 @@ export class UserListComponent implements OnInit {
     this.updateSuccess = '';
     this.roles = [];
   }
-
 
   // Add user
   AddSelectedUser(): void {
@@ -189,9 +192,6 @@ export class UserListComponent implements OnInit {
       next: (roles) => {
         this.roles = roles;
         this.isLoadingRoles = false;
-        
-        // Try to set current user's role if we can determine it
-        // Note: The API doesn't return current role, so we'll leave it empty for user to select
       },
       error: (error) => {
         console.error('Error loading roles:', error);

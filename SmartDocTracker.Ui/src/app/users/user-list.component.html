@@ -1,6 +1,4 @@
-<!-- users/user-list.component.html -->
 <div class="user-list-container">
-  <!-- Header -->
   <div class="user-list-header">
     <h2>User Management</h2>
     
@@ -31,19 +29,16 @@
     </div>
   </div>
 
-  <!-- Loading Indicator -->
   <div *ngIf="isLoading" class="loading">
     Loading users...
   </div>
 
-  <!-- Empty State -->
   <div *ngIf="!isLoading && users.length === 0" class="empty-state">
     <div class="empty-state-icon">👥</div>
     <h3>No Users Found</h3>
     <p>No users are currently available in the system.</p>
   </div>
 
-  <!-- Users Grid -->
   <div *ngIf="!isLoading && users.length > 0" class="users-grid">
     <table class="users-table">
       <thead>
@@ -57,7 +52,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of users; trackBy: trackByUserId" 
+        <tr *ngFor="let user of users | paginate: { itemsPerPage: itemsPerPage, currentPage: p, totalItems: totalItems }; trackBy: trackByUserId" 
             [class.selected]="isUserSelected(user.id)">
           <td *ngIf="canManageUsers" class="checkbox-cell">
             <label class="checkbox-wrapper">
@@ -83,9 +78,11 @@
         </tr>
       </tbody>
     </table>
+    <div class="pagination-container">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>
   </div>
 </div>
-<!-- Edit User Modal -->
 <div *ngIf="showEditModal" class="modal-overlay" (click)="closeEditModal()">
   <div class="modal-container edit-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -100,7 +97,6 @@
     
     <div class="modal-body">
       <form [formGroup]="editForm" (ngSubmit)="updateUser()">
-        <!-- Full Name Field -->
         <div class="form-group">
           <label for="fullName">
             <span class="material-icons-outlined">person</span>
@@ -118,7 +114,6 @@
           </div>
         </div>
 
-        <!-- Email Field -->
         <div class="form-group">
           <label for="email">
             <span class="material-icons-outlined">email</span>
@@ -136,7 +131,6 @@
           </div>
         </div>
 
-        <!-- Role Field -->
         <div class="form-group">
           <label for="role">
             <span class="material-icons-outlined">admin_panel_settings</span>
@@ -163,7 +157,6 @@
           </div>
         </div>
 
-        <!-- Current User Info -->
         <div class="current-info" *ngIf="userToEdit">
           <h4>Current Information:</h4>
           <div class="info-grid">
@@ -182,13 +175,11 @@
           </div>
         </div>
 
-        <!-- Success Message -->
         <div *ngIf="updateSuccess" class="my-success-alert">
           <span class="material-icons-outlined">check_circle</span>
-              {{ updateSuccess }}
+            {{ updateSuccess }}
         </div>
 
-        <!-- Error Message -->
         <div *ngIf="updateError" class="my-error-alert">
           <span class="material-icons-outlined">error</span>
           {{ updateError }}
@@ -197,7 +188,7 @@
     </div>
     
    <div class="modal-footer">
-  <button 
+ <button 
     class="btn btn-secondary" 
     (click)="closeEditModal()"
     [disabled]="isUpdating"
@@ -215,7 +206,6 @@
 </div>
 </div>
 </div>
-<!-- Add User Modal -->
 <div *ngIf="showAddModal" class="modal-overlay" (click)="closeAddModal()">
   <div class="modal-container edit-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -230,7 +220,6 @@
     
     <div class="modal-body">
       <form [formGroup]="addForm" (ngSubmit)="addUser()">
-        <!-- Full Name Field -->
         <div class="form-group">
           <label for="fullName">
             <span class="material-icons-outlined">person</span>
@@ -248,8 +237,7 @@
           </div>
         </div>
 
-       <!-- Email Field -->
-        <div class="form-group">
+       <div class="form-group">
         <label for="email">
             <span class="material-icons-outlined">email</span>
             Email *
@@ -266,7 +254,6 @@
         </div>
         </div>
 
-    <!-- Password Field -->
     <div class="form-group">
     <label for="password">
         <span class="material-icons-outlined">lock</span>
@@ -284,13 +271,11 @@
     </div>
     </div>
 
-        <!-- Success Message -->
         <div *ngIf="updateSuccess" class="alert alert-success">
           <span class="material-icons-outlined">check_circle</span>
           {{ updateSuccess }}
         </div>
 
-        <!-- Error Message -->
         <div *ngIf="updateError" class="alert alert-danger">
           <span class="material-icons-outlined">error</span>
           {{ updateError }}
@@ -299,7 +284,7 @@
     </div>
     
    <div class="modal-footer">
-  <button 
+ <button 
     class="btn btn-secondary" 
     (click)="closeAddModal()"
     [disabled]="isUpdating"

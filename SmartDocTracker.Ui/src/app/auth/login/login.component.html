@@ -1,78 +1,31 @@
-<div class="login-container">
-  <div class="login-card">
-    <!-- Header Section -->
-    <div class="login-header">
-      <div class="app-logo">
-        <!-- Document/Folder Icon SVG -->
-        <!-- <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" /> -->
-                  <div style="font-family: Arial, sans-serif; font-size: 24px; color: #4F46E5; font-weight: bold;">
-  Smart<span style="color: #10B981;">Document</span>Tracker
-</div>
-        <!-- </svg> -->
-      </div>
-      <!-- <h1 class="app-title">Smart Document Tracker</h1> -->
-      <p class="app-subtitle">Organize, Track, and Manage Your Documents</p>
-    </div>
-
-    <!-- Login Form -->
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <!-- Email/Username Field -->
+<div class="login-card">
+  <div class="login-form-container">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" >
       <div class="form-group">
-        <label for="Email" class="form-label">Email Address</label>
-        <input 
-          type="email" 
-          id="Email" 
-          formControlName="Email"
-          class="form-input"
-          [class.is-invalid]="loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched"
-          placeholder="Enter your email">
-        @if (loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched) {
-          <div class="invalid-feedback">
-            Email is required
-          </div>
-        }
+        <input type="text" formControlName="emailOrUsername" placeholder="Email, username" required>
       </div>
-      
-      <!-- Password Field -->
       <div class="form-group">
-        <label for="password" class="form-label">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          formControlName="password"
-          class="form-input"
-          [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-          placeholder="Enter your password">
-        @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-          <div class="invalid-feedback">
-            Password is required
-          </div>
-        }
+        <input type="password" formControlName="password" placeholder="Password" required>
       </div>
-      
-      <!-- Error Alert -->
-      @if (errorMessage) {
-        <div class="alert alert-danger">
-          {{ errorMessage }}
-        </div>
-      }
-      
-      <!-- Submit Button -->
-      <button 
-        type="submit" 
-        [disabled]="loginForm.invalid" 
-        class="submit-button"
-        [class.loading]="isLoading">
-        @if (!isLoading) {
-          Sign In to Dashboard
-        }
-      </button>
+       <!-- href="#"  -->
+      <a 
+      class="forgot-password">Forgot password?</a>
+      <button type="submit" class="login-button" [disabled]="!loginForm.valid">Login</button>
     </form>
-
-    <!-- Additional Links -->
-    <div class="forgot-password">
-      <a href="#" routerLink="/forgot-password">Forgot your password?</a>
+    <div class="social-login">
+      <p>or login with</p>
+      <div class="social-icons">
+        <a href="#" class="social-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google"></a>
+        <a href="#" class="social-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook"></a>
+        <a href="#" class="social-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub"></a>
+        <a href="#" class="social-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X"></a>
+      </div>
     </div>
+  </div>
+  <div class="signup-section">
+    <h2>Don't have an account?</h2>
+    <p>Sign up to get started!</p>
+    <button class="signup-button" (click)="goToSignup()">Sign Up</button>
   </div>
 </div>

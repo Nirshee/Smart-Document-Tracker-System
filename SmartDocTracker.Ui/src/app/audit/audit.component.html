@@ -39,7 +39,9 @@ Export to Excel      </button>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of Audit">
+                 
+
+        <tr *ngFor="let user of Audit | paginate: { itemsPerPage: itemsPerPage, currentPage: p, totalItems: totalItems };">
           <!-- <td *ngIf="canManageUsers" class="checkbox-cell">
             <label class="checkbox-wrapper">
               <input 
@@ -67,5 +69,8 @@ Export to Excel      </button>
         </tr>
       </tbody>
     </table>
+     <div class="pagination-container">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>
   </div>
 </div>

@@ -26,6 +26,10 @@ const routes: Routes = [
     path: 'login', 
     loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent) 
   },
+  {
+    path: 'signup',
+    loadComponent: () => import('./auth/signup/signup.component').then(m => m.SignupComponent),
+  },
   { 
     path: '', 
     canActivate: [AuthGuard],
@@ -49,6 +53,7 @@ const routes: Routes = [
     loadComponent: () => import('./audit/audit.component').then(m => m.AuditComponent),
     canActivate: [AuthGuard]
   },
+       
 //  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     
     ]

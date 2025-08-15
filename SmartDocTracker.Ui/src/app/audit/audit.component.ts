@@ -7,6 +7,7 @@ import * as XLSX from 'xlsx';
 
 import FileSaver from 'file-saver';
 import saveAs from 'file-saver';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @Component({
@@ -14,12 +15,16 @@ import saveAs from 'file-saver';
   templateUrl: './audit.component.html',
   styleUrls: ['./audit.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule,NgxPaginationModule]
 })
 export class AuditComponent implements OnInit {
   Audit: AuditDetail[] = [];
   isLoading = false;
   
+    // Pagination properties
+  p: number = 1;
+  itemsPerPage: number = 5;
+  totalItems: number = 0;
 
   constructor(
     private auditservice: AuditService,
@@ -34,6 +39,7 @@ export class AuditComponent implements OnInit {
     this.isLoading = true;
     this.auditservice.getAllUsers().subscribe({
       next: (Audit) => {
+        this.totalItems = Audit.length;
         this.Audit = Audit;
         this.isLoading = false;
       },

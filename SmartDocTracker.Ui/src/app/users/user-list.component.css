@@ -517,3 +517,50 @@
   align-items: center;
   gap: 10px;
 }
+
+
+/* users/user-list.component.css */
+/* ... existing styles ... */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+:host ::ng-deep .ngx-pagination .current {
+  background: #667eea !important;
+  border-radius: 50%;
+  color: white !important;
+  font-weight: 600;
+  border: none !important;
+  padding: 8px 12px;
+  margin: 0 4px;
+}
+
+:host ::ng-deep .ngx-pagination li {
+  margin: 0 4px;
+}
+
+:host ::ng-deep .ngx-pagination a,
+:host ::ng-deep .ngx-pagination button {
+  color: #495057 !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 50% !important;
+  padding: 8px 12px !important;
+  transition: all 0.2s ease-in-out;
+}
+
+:host ::ng-deep .ngx-pagination a:hover,
+:host ::ng-deep .ngx-pagination button:hover {
+  background: #f1f3f5 !important;
+  color: #667eea !important;
+  border-color: #667eea !important;
+}
+
+:host ::ng-deep .ngx-pagination .disabled a,
+:host ::ng-deep .ngx-pagination .disabled a:hover {
+  color: #adb5bd !important;
+  background: #f8f9fa !important;
+  border-color: #e9ecef !important;
+  cursor: not-allowed;
+}

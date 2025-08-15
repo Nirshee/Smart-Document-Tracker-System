@@ -61,7 +61,8 @@ export class UserService {
 
   // Get roles for dropdown
   getRoles(): Observable<Role[]> {
-    return this.http.get<Role[]>(`${this.apiUrl}/lookup/roles`);
+    const headers = this.getAuthHeaders();
+    return this.http.get<Role[]>(`${this.apiUrl}/lookup/roles`, { headers });
   }
 
   // Update user
