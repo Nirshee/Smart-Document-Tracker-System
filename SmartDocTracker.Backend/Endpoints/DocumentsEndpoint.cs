@@ -25,6 +25,7 @@ public static class DocumentsEndpoint
     DocumentUploadDto dto,
     IDocumentsRepository repo,
     IAuditLogRepository auditLogRepo,
+    IConfiguration configuration,
     ClaimsPrincipal user) =>
         {
             var userId = user.FindFirst("Id")?.Value;
@@ -50,12 +51,23 @@ public static class DocumentsEndpoint
 
             if (extension != ".pdf")
             {
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string friendlyName = "SmartDocTracker";
+
+                int index = baseDir.IndexOf(friendlyName, StringComparison.OrdinalIgnoreCase);
+                string rootProjectPath = index >= 0
+                    ? baseDir.Substring(0, index + friendlyName.Length)
+                    : baseDir;
+
+                string sofficePath = Path.Combine(rootProjectPath, configuration["LibreOffice:SofficePath"]);
+                //"LibreOfficePortable\\App\\libreoffice\\program\\soffice.exe");
+
                 // Convert to PDF using LibreOffice
                 var process = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = @"C:\Program Files\LibreOffice\program\soffice.exe",
+                        FileName = sofficePath,
                         Arguments = $"--headless --convert-to pdf \"{tempFilePath}\" --outdir \"{uploadsDir}\"",
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
@@ -65,7 +77,15 @@ public static class DocumentsEndpoint
                 };
 
                 process.Start();
+                string errorOutput = process.StandardError.ReadToEnd(); // Read the error stream
                 process.WaitForExit();
+
+                if (process.ExitCode != 0)
+                {
+                    // Log the actual error from LibreOffice for debugging
+                    Console.WriteLine($"LibreOffice conversion failed. Error details: {errorOutput}");
+                    return Results.Problem($"File conversion to PDF failed. Details: {errorOutput}");
+                }
 
                 var pdfFilePath = Path.ChangeExtension(tempFilePath, ".pdf");
                 if (File.Exists(pdfFilePath))
@@ -101,6 +121,7 @@ public static class DocumentsEndpoint
             await auditLogRepo.AddLogAsync(Guid.Parse(userId), document.Id, "Uploaded");
             return Results.Ok("Document uploaded Sucessfully");
         });
+
 
 
 

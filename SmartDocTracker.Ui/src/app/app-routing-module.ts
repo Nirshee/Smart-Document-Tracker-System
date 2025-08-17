@@ -38,7 +38,7 @@ const routes: Routes = [
         path: 'dashboard', 
         loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'signup', pathMatch: 'full' },
        {
     path: 'documents',
     loadComponent: () => import('./documents/document-list.component').then(m => m.DocumentListComponent),

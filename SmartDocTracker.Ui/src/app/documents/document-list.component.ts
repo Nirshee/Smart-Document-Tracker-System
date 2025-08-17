@@ -320,10 +320,10 @@ export class DocumentListComponent implements OnInit {
 
   handleFileSelection(file: File): void {
     // Check if file is PDF
-    if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) {
-      this.uploadError = 'Please select a PDF file only.';
-      return;
-    }
+    // if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) {
+    //   this.uploadError = 'Please select a PDF file only.';
+    //   return;
+    // }
 
     // Check file size (e.g., max 10MB)
     if (file.size > 10 * 1024 * 1024) {
